@@ -26,6 +26,8 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_dependency 'yard', "~> 0.8"
+  s.add_dependency 'redcarpet', "~> 3.3"
+  s.add_dependency 'jbuilder', "~> 2.3"
 
   s.add_development_dependency "minitest"
   s.add_development_dependency "minitest-autotest", "~> 1.0"
