@@ -1,11 +1,11 @@
 require 'test_helper'
 
-describe Gcloud::Doc::Builder do
+describe Gcloud::Doc::Json, :docs do
 
   describe "when given source" do
 
     def docs_from fixture
-      @builder = Gcloud::Doc::Builder.new "test/fixtures/#{fixture}"
+      @builder = Gcloud::Doc::Json.new "test/fixtures/#{fixture}"
       @builder.docs.attributes!
     end
 
@@ -21,16 +21,18 @@ describe Gcloud::Doc::Builder do
         docs = docs_from "module.rb"
         services = docs["services"]
         services.size.must_equal 1
+        services[0]["id"].must_equal "top"
       end
 
-      it "must have metadata" do
+      it "must have service metadata" do
         docs = docs_from "module.rb"
-        service = docs["services"][0]
-        service["metadata"]["name"].must_equal "Top"
-        service["metadata"]["description"].must_equal "<p>The root <a href=\"http://docs.ruby-lang.org/en/2.2.0/Module.html\">module</a> in the test fixtures.</p>"
+        metadata = docs["services"][0]["metadata"]
+        metadata["name"].must_equal "Top"
+        metadata["description"].must_equal "<p>The root <a href=\"http://docs.ruby-lang.org/en/2.2.0/Module.html\">module</a> in the test fixtures.</p>"
+        metadata["source"].must_equal "test/fixtures/module.rb#L4"
       end
 
-      it "must have methods" do
+      it "must have service methods" do
         docs = docs_from "module.rb"
         docs["services"][0]["methods"].must_be :empty?
       end

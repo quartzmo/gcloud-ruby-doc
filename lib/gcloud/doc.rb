@@ -5,7 +5,7 @@ require "jbuilder"
 
 module Gcloud
   module Doc
-    class Builder
+    class Json
 
       attr_reader :input, :docs, :registry, :code
       # Creates a new builder to output documentation in JSON
@@ -24,6 +24,7 @@ module Gcloud
         modules = @registry.all(:module)
         @docs = Jbuilder.new do |json|
           json.services modules do |service|
+            json.id service.name.to_s.downcase
             metadata json, service
             methods = service.children.select{|m| m.type == :method }
             json.methods methods do |method|
@@ -38,6 +39,7 @@ module Gcloud
         json.metadata do
           json.name object.name.to_s
           json.description md(object.docstring.to_s)
+          json.source object.files.join("#L")
         end
       end
 
