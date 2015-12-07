@@ -13,18 +13,23 @@ module Top
   #
   # Each call creates a new instance.
   #
-  # @param [String] name The name, which can be any name as defined by [this
+  # @see http://ntp.org/documentation.html NTP Documentation
+  #
+  # @param [String] personal_name The name, which can be any name as defined by [this
   #   article on names](https://en.wikipedia.org/wiki/Personal_name)
+  #
+  # @raise [ArgumentError] if the name is not a name as defined by [this
+  #   article](https://en.wikipedia.org/wiki/Personal_name)
   #
   # @return [Top::SomeObject] a someobject instance
   #
-  # @example
+  # @example You can pass options.
   #   options = { extra: "my option extra" }
   #   some_object = Top.storage "my name", options do |config|
   #     config.more = "more"
   #   end
   #
-  def self.example_method name, options = {}
+  def self.example_method personal_name, options = {}
     SomeObject.new
   end
 end

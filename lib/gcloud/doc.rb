@@ -29,22 +29,53 @@ module Gcloud
             methods = service.children.select{|m| m.type == :method }
             json.methods methods do |method|
               metadata json, method
+              json.params method.docstring.tags(:param) do |t|
+                json.name t.name
+                json.types t.types
+                json.description md(t.text)
+                json.optional false
+                json.nullable false
+              end
+              json.exceptions method.docstring.tags(:raise) do |t|
+                json.type t.type
+                json.description md(t.text)
+              end
+              json.returns method.docstring.tags(:return) do |t|
+                json.types t.types
+                json.description md(t.text)
+              end
             end
           end
         end
         @registry.clear
       end
 
+      protected
+
       def metadata json, object
         json.metadata do
           json.name object.name.to_s
-          json.description md(object.docstring.to_s)
+          json.description md(object.docstring.to_s, true)
           json.source object.files.join("#L")
+          json.resources object.docstring.tags(:see) do |t|
+            json.href t.name
+            json.title t.text
+          end
+          json.examples object.docstring.tags(:example) do |t|
+            json.caption md(t.name)
+            json.code t.text
+          end
         end
       end
 
-      def md s
-        markdown.render(s.to_s).strip.gsub("\n", " ")
+      def md s, multi_paragraph = false
+        html = markdown.render(s.to_s).strip.gsub("\n", " ")
+        html = unwrap_paragraph(html) unless multi_paragraph
+        html
+      end
+
+      def unwrap_paragraph html
+        Regexp.new(/\A<p>(.*)<\/p>\Z/m).match(html)[1]
       end
 
       def markdown
