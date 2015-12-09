@@ -26,24 +26,12 @@ module Gcloud
           json.services modules do |service|
             json.id service.name.to_s.downcase
             metadata json, service
-            methods = service.children.select{|m| m.type == :method }
-            json.methods methods do |method|
-              metadata json, method
-              json.params method.docstring.tags(:param) do |t|
-                json.name t.name
-                json.types t.types
-                json.description md(t.text)
-                json.optional false
-                json.nullable false
-              end
-              json.exceptions method.docstring.tags(:raise) do |t|
-                json.type t.type
-                json.description md(t.text)
-              end
-              json.returns method.docstring.tags(:return) do |t|
-                json.types t.types
-                json.description md(t.text)
-              end
+            methods json, service
+            classes = service.children.select{|c| c.type == :class && c.namespace.name == service.name }
+            json.pages classes do |klass|
+              json.id klass.name.to_s.downcase
+              metadata json, klass
+              methods json, klass
             end
           end
         end
@@ -56,7 +44,7 @@ module Gcloud
         json.metadata do
           json.name object.name.to_s
           json.description md(object.docstring.to_s, true)
-          json.source object.files.join("#L")
+          json.source object.files.first.join("#L")
           json.resources object.docstring.tags(:see) do |t|
             json.href t.name
             json.title t.text
@@ -64,6 +52,32 @@ module Gcloud
           json.examples object.docstring.tags(:example) do |t|
             json.caption md(t.name)
             json.code t.text
+          end
+        end
+      end
+
+      def methods json, object
+        methods = object.children.select{|c| c.type == :method }
+        json.methods methods do |method|
+          metadata json, method
+          json.params method.docstring.tags(:param) do |t|
+            json.name t.name
+            json.types t.types
+            json.description md(t.text)
+            # extract default value from MethodObject#parameters ⇒ Array<Array(String, String)>
+            # keyword argument parameter names contain trailing ":" in MethodObject#parameters, but not in Tag
+            default_value = method.parameters.find{|p| p[0].sub(/:\z/, "") == t.name.to_s}[1]
+            json.optional !default_value.nil?
+            json.nullable false # TODO: how to determine this in Ruby?
+            # TODO: add default value to spec and impl
+          end
+          json.exceptions method.docstring.tags(:raise) do |t|
+            json.type t.type
+            json.description md(t.text)
+          end
+          json.returns method.docstring.tags(:return) do |t|
+            json.types t.types
+            json.description md(t.text)
           end
         end
       end

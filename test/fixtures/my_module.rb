@@ -1,10 +1,15 @@
 ##
 # The outermost module in the test fixtures.
-module Top
+#
+# This is a Ruby [module](http://docs.ruby-lang.org/en/2.2.0/Module.html).
+#
+# @see http://docs.ruby-lang.org/en/2.2.0/Module.html Ruby module docs
+#
+module MyModule
 
   ##
   # A simple class. Does nothing.
-  class SomeObject
+  class ReturnClass
   end
 
   ##
@@ -17,19 +22,20 @@ module Top
   #
   # @param [String] personal_name The name, which can be any name as defined by [this
   #   article on names](https://en.wikipedia.org/wiki/Personal_name)
+  # @param [String] email The email for the person.
+  # @param [Boolean] opt_in Whether to subscribe to *all* mailing lists.
   #
   # @raise [ArgumentError] if the name is not a name as defined by [this
   #   article](https://en.wikipedia.org/wiki/Personal_name)
   #
-  # @return [Top::SomeObject] a someobject instance
+  # @return [MyModule::ReturnClass] an empty object instance
   #
   # @example You can pass options.
-  #   options = { extra: "my option extra" }
-  #   some_object = Top.storage "my name", options do |config|
+  #   return_object = Mymodule.storage "my name", opt_in: true do |config|
   #     config.more = "more"
   #   end
   #
-  def self.example_method personal_name, options = {}
-    SomeObject.new
+  def self.example_method personal_name, email: nil, opt_in: false
+    ReturnClass.new
   end
 end
