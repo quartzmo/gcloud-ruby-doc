@@ -63,7 +63,19 @@ describe Gcloud::Doc::Json, :docs do
       params[0]["types"].must_equal ["String"]
       params[0]["description"].must_equal "The name, which can be any name as defined by <a href=\"https://en.wikipedia.org/wiki/Personal_name\">this article on names</a>"
       params[0]["optional"].must_equal false
-      params[0]["nullable"].must_equal false   # TODO: how to define this with Yard?
+      params[0]["nullable"].must_equal false
+
+      params[1]["name"].must_equal "email"
+      params[1]["types"].must_equal ["String", "Array<String>", "nil"]
+      params[1]["description"].must_equal "The person&#39;s email or emails."
+      params[1]["optional"].must_equal true
+      params[1]["nullable"].must_equal true
+
+      params[2]["name"].must_equal "opt_in"
+      params[2]["types"].must_equal ["Boolean", "nil"]
+      params[2]["description"].must_equal "Whether to subscribe to <em>all</em> mailing lists."
+      params[2]["optional"].must_equal true
+      params[2]["nullable"].must_equal true
     end
 
     it "must have exceptions" do
@@ -162,7 +174,7 @@ describe Gcloud::Doc::Json, :docs do
         params[5]["types"].must_equal ["String"]
         params[5]["description"].must_equal "a keyword argument for the prefix"
         params[5]["optional"].must_equal true
-        params[5]["nullable"].must_equal false
+        params[5]["nullable"].must_equal true
 
         params[6]["name"].must_equal "yield"
         params[6]["types"].must_equal ["block"]

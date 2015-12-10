@@ -22,8 +22,8 @@ module MyModule
   #
   # @param [String] personal_name The name, which can be any name as defined by [this
   #   article on names](https://en.wikipedia.org/wiki/Personal_name)
-  # @param [String] email The email for the person.
-  # @param [Boolean] opt_in Whether to subscribe to *all* mailing lists.
+  # @param [String, Array<String>, nil] email The person's email or emails.
+  # @param [Boolean, nil] opt_in Whether to subscribe to *all* mailing lists.
   #
   # @raise [ArgumentError] if the name is not a name as defined by [this
   #   article](https://en.wikipedia.org/wiki/Personal_name)

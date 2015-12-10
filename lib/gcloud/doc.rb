@@ -74,7 +74,7 @@ module Gcloud
             params += block_params
           end
           json.params params do |param|
-            param json, method, param rescue raise param.inspect
+            param json, method, param
           end
           json.exceptions method.docstring.tags(:raise) do |t|
             json.type t.type
@@ -119,7 +119,7 @@ module Gcloud
           json.optional !default_value.nil?
         end
 
-        json.nullable false # TODO: how to determine this in Ruby?
+        json.nullable(default_value == "nil" || (!param.types.nil? && param.types.include?("nil")))
         # json.defaults param.defaults TODO: add default value to spec and impl
       end
 
