@@ -107,7 +107,7 @@ describe Gcloud::Doc::Json, :docs do
         metadata = @docs["services"][0]["pages"][1]["methods"][0]["metadata"]
         metadata["name"].must_equal "example_instance_method"
         metadata["description"].must_equal "<p>Accepts many arguments for testing this library. Also accepts a block if a block is given.</p>  <p>Do not call this method until you have read all of its documentation.</p>"
-        metadata["source"].must_equal "test/fixtures/my_module/my_class.rb#L41"
+        metadata["source"].must_equal "test/fixtures/my_module/my_class.rb#L46"
       end
 
       it "must have metadata examples" do
@@ -126,7 +126,7 @@ describe Gcloud::Doc::Json, :docs do
 
       it "can have params with options hash and keyword args" do
         params = @docs["services"][0]["pages"][1]["methods"][0]["params"]
-        params.size.must_equal 6
+        params.size.must_equal 8
 
         params[0]["name"].must_equal "policy"
         params[0]["types"].must_equal ["String"]
@@ -140,13 +140,13 @@ describe Gcloud::Doc::Json, :docs do
         params[1]["optional"].must_equal true
         params[1]["nullable"].must_equal false
 
-        params[2]["name"].must_equal "opts:subject"
+        params[2]["name"].must_equal "opts.subject"
         params[2]["types"].must_equal ["String"]
         params[2]["description"].must_equal "The subject"
         params[2]["optional"].must_equal true
         params[2]["nullable"].must_equal false
 
-        params[3]["name"].must_equal "opts:body"
+        params[3]["name"].must_equal "opts.body"
         params[3]["types"].must_equal ["String"]
         params[3]["description"].must_equal "The body"
         params[3]["optional"].must_equal true
@@ -163,6 +163,20 @@ describe Gcloud::Doc::Json, :docs do
         params[5]["description"].must_equal "a keyword argument for the prefix"
         params[5]["optional"].must_equal true
         params[5]["nullable"].must_equal false
+
+        params[6]["name"].must_equal "yield"
+        params[6]["types"].must_equal ["block"]
+        params[6]["description"].must_equal "An optional block for setting configuration."
+        params[6]["optional"].must_equal true
+        params[6]["nullable"].must_equal false
+
+        params[7]["name"].must_equal "yield.c"
+        params[7]["types"].must_equal ["MyConfig"]
+        params[7]["description"].must_equal "A new instance of MyConfig. See <a href=\"https://en.wikipedia.org/wiki/Configuration_management\">configuration</a> for more info."
+        params[7]["optional"].must_equal false
+        params[7]["nullable"].must_equal false
+
+        # TODO: support @yieldreturn as an additional parameter?
       end
 
     end

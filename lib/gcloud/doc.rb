@@ -68,8 +68,13 @@ module Gcloud
             memo += options_tags unless options_tags.empty?
             memo
           end
+          if block = method.docstring.tag(:yield)
+            block_params = method.docstring.tags :yieldparam
+            block_params.unshift block
+            params += block_params
+          end
           json.params params do |param|
-            param json, method, param
+            param json, method, param rescue raise param.inspect
           end
           json.exceptions method.docstring.tags(:raise) do |t|
             json.type t.type
@@ -86,26 +91,36 @@ module Gcloud
 
         if param.tag_name == "option"
           # #<YARD::Tags::OptionTag:0x007fc78102ad78 @tag_name="option", @text=nil, @name="opts", @types=nil, @pair=#<YARD::Tags::DefaultTag:0x007fc78102bd40 @tag_name="option", @text="The subject", @name=":subject", @types=["String"], @defaults=nil>, @object=#<yardoc method MyModule::MyClass#example_instance_method>>
-          json.name param.name + param.pair.name
+          json.name (param.name + param.pair.name).sub(":", ".")
           param = param.pair
+        elsif param.tag_name == "yield"
+          json.name "yield"
+        elsif param.tag_name == "yieldparam"
+          json.name "yield.#{param.name}"
         else
           json.name param.name
         end
-        json.types param.types
+
+        if param.tag_name == "yield"
+          json.types ["block"]
+        else
+          json.types param.types
+        end
         json.description md(param.text)
 
-        if param.tag_name == "option"
+        if param.tag_name == "option" || param.tag_name == "yield"
           json.optional true
-          json.nullable false # TODO: how to determine this in Ruby?
-          # json.defaults param.defaults TODO: add default value to spec and impl
+        elsif param.tag_name == "yieldparam"
+          json.optional false
         else
           # extract default value from MethodObject#parameters ⇒ Array<Array(String, String)>
           # keyword argument parameter names contain trailing ":" in MethodObject#parameters, but not in Tag
           default_value = method.parameters.find { |p| p[0].sub(/:\z/, "") == param.name.to_s }[1]
           json.optional !default_value.nil?
-          json.nullable false # TODO: how to determine this in Ruby?
-          # TODO: add default value to spec and impl
         end
+
+        json.nullable false # TODO: how to determine this in Ruby?
+        # json.defaults param.defaults TODO: add default value to spec and impl
       end
 
       def md s, multi_paragraph = false
