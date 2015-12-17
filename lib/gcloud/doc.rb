@@ -57,7 +57,7 @@ module Gcloud
       end
 
       def methods json, object
-        methods = object.children.select { |c| c.type == :method }
+        methods = object.children.select { |c| c.type == :method && !c.is_alias? } # TODO: handle aliases
         json.methods methods do |method|
           metadata json, method
           options = method.docstring.tags(:option)
@@ -115,7 +115,9 @@ module Gcloud
         else
           # extract default value from MethodObject#parameters ⇒ Array<Array(String, String)>
           # keyword argument parameter names contain trailing ":" in MethodObject#parameters, but not in Tag
-          default_value = method.parameters.find { |p| p[0].sub(/:\z/, "") == param.name.to_s }[1]
+          method_param_pair = method.parameters.find { |p| p[0].sub(/:\z/, "") == param.name.to_s }
+          fail "no entry found for @param: '#{param.name}' in MethodObject#parameters: #{method.inspect}" unless method_param_pair
+          default_value = method_param_pair[1]
           json.optional !default_value.nil?
         end
 

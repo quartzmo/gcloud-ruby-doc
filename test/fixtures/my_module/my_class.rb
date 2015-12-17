@@ -29,6 +29,10 @@ module MyModule
     # @yieldreturn [Boolean] Whether the configuration should be applied
     #   immediately or saved for later.
     #
+    # @return [Array<(Boolean, MyConfig)>, nil] An array containing the return
+    #   value from the block and the block MyConfig argument, or nil if no
+    #   block was given.
+    #
     # @example You can pass a block.
     #   my_class = MyClass.new
     #   my_class.example_instance_method times: 5 do |my_config|
@@ -39,10 +43,6 @@ module MyModule
     # @example Or you can just pass simple arguments.
     #   my_class.example_instance_method {subject: "world"}, prefix: "hello"
     #
-    # @return [Array<(Boolean, MyConfig)>, nil] An array containing the return
-    #   value from the block and the block MyConfig argument, or nil if no
-    #   block was given.
-    #
     def example_instance_method policy = "ALWAYS", opts = {}, times: 10, prefix: nil
       if block_given?
         my_config = MyConfig.new
@@ -50,6 +50,7 @@ module MyModule
         [immediate, my_config]
       end
     end
+    alias_method :alias_instance_method, :example_instance_method
   end
 
   class MyConfig
