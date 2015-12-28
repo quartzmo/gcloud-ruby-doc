@@ -2,6 +2,10 @@ module MyModule
   ##
   # You can use MyClass for almost anything.
   class MyClass
+    # @private This method should not appear in the output.
+    def my_hidden_method
+    end
+
     ##
     # Accepts many arguments for testing this library. Also accepts a block if a
     # block is given.

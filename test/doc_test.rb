@@ -122,7 +122,7 @@ describe Gcloud::Doc::Json, :docs do
         metadata = @docs["services"][0]["pages"][1]["methods"][0]["metadata"]
         metadata["name"].must_equal "example_instance_method"
         metadata["description"].must_equal "<p>Accepts many arguments for testing this library. Also accepts a block if a block is given.</p>  <p>Do not call this method until you have read all of its documentation.</p>"
-        metadata["source"].must_equal "test/fixtures/my_module/my_class.rb#L46"
+        metadata["source"].must_equal "test/fixtures/my_module/my_class.rb#L50"
       end
 
       it "must have metadata examples" do

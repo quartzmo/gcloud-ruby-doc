@@ -57,7 +57,7 @@ module Gcloud
       end
 
       def methods json, object
-        methods = object.children.select { |c| c.type == :method && !c.is_alias? } # TODO: handle aliases
+        methods = object.children.select { |c| c.type == :method && !c.is_alias? && !c.has_tag?(:private)} # TODO: handle aliases
         json.methods methods do |method|
           metadata json, method
           options = method.docstring.tags(:option)
