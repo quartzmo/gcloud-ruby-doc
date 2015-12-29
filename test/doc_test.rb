@@ -4,7 +4,8 @@ describe Gcloud::Doc::Json, :docs do
 
 
   before do
-    @builder = Gcloud::Doc::Json.new "test/fixtures/**/*.rb"
+    registry = YARD::Registry.load(["test/fixtures/**/*.rb"], true)
+    @builder = Gcloud::Doc::Json.new registry
     @docs = @builder.docs.attributes!
   end
 

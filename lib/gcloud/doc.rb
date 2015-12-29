@@ -6,17 +6,15 @@ require "jbuilder"
 module Gcloud
   module Doc
     class Json
+      attr_reader :input, :docs, :registry
 
-      attr_reader :input, :docs, :registry, :code
+      ##
       # Creates a new builder to output documentation in JSON
       #
-      # input- the input file pattern as an array which will be passed to Yard
-      # output - the output directory where to store the JSON files, defaults to doc/json
-      # options - an options hash
-      def initialize input = ["lib/**/*.rb"]
-        @input = Array(input).freeze
-        @registry = YARD::Registry.load(@input, true)
-        @code = @registry.all.dup.freeze
+      # @param [YARD::Registry] registry The YARD registry instance containing
+      #   the source code objects
+      def initialize registry
+        @registry = registry
         build
       end
 
